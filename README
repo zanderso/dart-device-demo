@@ -1,7 +1,5 @@
-Here's how to turn this code into an Android app running in the WebView:
-
-0. Grab the Android SDK. Add sdk/tools and sdk/platform-tools to your PATH
-
+Here's how to turn this code into an Android app running in the WebView. These
+instructions should work on either Linux or MacOS.
 
 1. Install Node.js version 0.10.0 or better:
 
@@ -9,17 +7,21 @@ Follow instructions here:
 
 https://github.com/MobileChromeApps/mobile-chrome-apps/blob/master/docs/Installation.md
 
-under "Development dependencies for all platforms"
+under "Development dependencies for all platforms" and "Targeting Android."
 
 
 2. Check out the mobile-chrome-apps repo from github:
 
-$ git clone https://github.com/MobileChromeApps/mobile-chrome-apps.git
+$ git clone --recursive https://github.com/MobileChromeApps/mobile-chrome-apps.git
 
 
 3. Install the package:
 
 $ npm install /path/to/mobile-chrome-apps
+
+This will install a number of dependencies. It will also create a directory
+called node_modules/.bin, which you can add to your path to access the "cca"
+tool.
 
 
 4. Check out the DartDeviceDemo repo from github
@@ -29,7 +31,7 @@ $ git clone https://github.com/zanderso/dart-device-demo.git
 
 5. Create a new mobile chrome app project from this source:
 
-$ cca create DartDeviceDemo --copy-form=/path/to/dart-device-demo
+$ cca create DartDeviceDemo --copy-form=/path/to/dart-device-demo/manifest.json
 $ cd DartDeviceDemo
 
 
@@ -39,18 +41,19 @@ $ cd www
 $ pub install
 
 
-6b (optional). Build with dart2js
+6b(for Android w/o Dart-enabled WebView). Build with dart2js
 
 $ dart2js -o demo.dart.js demo.dart
 
 
-7. Copy www/config.xml into outer directory/
+7. Copy www/config.xml into outer directory.
 
-$ cp www/config.xml .
+$ cp config.xml ..
 
 
 8. Install Cordova/PhoneGap plugins:
 
+$ cd ..
 $ cca plugin add org.apache.cordova.device-motion
 $ cca plugin add org.apache.cordova.geolocation
 $ cca plugin add https://github.com/zanderso/cordova-plugin-barometer.git
