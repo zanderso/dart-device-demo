@@ -31,7 +31,7 @@ $ git clone https://github.com/zanderso/dart-device-demo.git
 
 5. Create a new mobile chrome app project from this source:
 
-$ cca create DartDeviceDemo --copy-form=/path/to/dart-device-demo/manifest.json
+$ cca create DartDeviceDemo --android --copy-form=/path/to/dart-device-demo/manifest.json
 $ cd DartDeviceDemo
 
 
