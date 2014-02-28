@@ -1,0 +1,6 @@
+name: DartDeviceDemo
+dependencies:
+  rikulo_gap:
+    git:
+      url: git://github.com/zanderso/gap.git
+  chart: any

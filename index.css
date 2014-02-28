@@ -1,0 +1,49 @@
+/*Copyright (c) 2014, the Dart project authors.  Please see the AUTHORS file
+for details. All rights reserved. Use of this source code is governed by a
+BSD-style license that can be found in the LICENSE file.*/
+
+html {
+  height: 100%;
+}
+
+body {
+  box-shadow: 0 0 50px #ddd inset;
+  -webkit-box-shadow: 0 0 50px #ddd inset;
+  font-family: OpenSans, Helvetica, Arial, sans;
+  height: 100%;
+  margin: 0;
+  text-align: center;
+}
+
+img {
+  margin: 50px auto;
+}
+
+#status_id {
+  font-size: 10pt;
+  text-align: left;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.data_container_class {
+  float: left;
+  width: 33%;
+}
+
+.heading_class {
+  font-size: 10pt;
+  text-align: left;
+  margin-right: 10px;
+  line-height: 12px;
+  margin-bottom: 4px;
+  margin-top:0px;
+}
+
+.data_class {
+  font-size: 8pt;
+  text-align: left;
+  line-height: 10px;
+  margin-bottom: 4px;
+  margin-top:0px;
+}

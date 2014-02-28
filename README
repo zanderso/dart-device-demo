@@ -1,0 +1,61 @@
+Here's how to turn this code into an Android app running in the WebView:
+
+0. Grab the Android SDK. Add sdk/tools and sdk/platform-tools to your PATH
+
+
+1. Install Node.js version 0.10.0 or better:
+
+Follow instructions here:
+
+https://github.com/MobileChromeApps/mobile-chrome-apps/blob/master/docs/Installation.md
+
+under "Development dependencies for all platforms"
+
+
+2. Check out the mobile-chrome-apps repo from github:
+
+$ git clone https://github.com/MobileChromeApps/mobile-chrome-apps.git
+
+
+3. Install the package:
+
+$ npm install /path/to/mobile-chrome-apps
+
+
+4. Check out the DartDeviceDemo repo from github
+
+$ git clone https://github.com/zanderso/dart-device-demo.git
+
+
+5. Create a new mobile chrome app project from this source:
+
+$ cca create DartDeviceDemo --copy-form=/path/to/dart-device-demo
+$ cd DartDeviceDemo
+
+
+6. Install pub packages.
+
+$ cd www
+$ pub install
+
+
+6b (optional). Build with dart2js
+
+$ dart2js -o demo.dart.js demo.dart
+
+
+7. Copy www/config.xml into outer directory/
+
+$ cp www/config.xml .
+
+
+8. Install Cordova/PhoneGap plugins:
+
+$ cca plugin add org.apache.cordova.device-motion
+$ cca plugin add org.apache.cordova.geolocation
+$ cca plugin add https://github.com/zanderso/cordova-plugin-barometer.git
+
+
+9. Run on device:
+
+$ cca run android

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dart Device Demo</title>
+    <link rel="stylesheet" href="index.css" type="text/css" />
+  </head>
+  <body>
+    <h1>Dart Device Demo</h1>
+
+    <div id='accel_chart_id'></div>
+    <div id='baro_chart_id'></div>
+    <div id='temp_chart_id'></div>
+
+    <p id='status_id'>Loading Script...</p>
+
+    <div class='data_container_class'>
+      <p id='pressure_id' class='heading_class'></p>
+      <p id='pressure_hPa_id' class='data_class'></p>
+      <p id='altitude_id' class='heading_class'></p>
+      <p id='altitude_m_id' class ='data_class'></p>
+    </div>
+
+    <div class='data_container_class'>
+      <p id='location_id' class='heading_class'></p>
+      <p id='location_lat_id' class='data_class'></p>
+      <p id='location_lon_id' class='data_class'></p>
+    </div>
+
+    <div class='data_container_class'>
+      <p id='accel_id' class='heading_class'></p>
+      <p id='accel_x_id' class='data_class'></p>
+      <p id='accel_y_id' class='data_class'></p>
+      <p id='accel_z_id' class='data_class'></p>
+      <p id='accel_mag_id' class='data_class'></p>
+    </div>
+
+    <script src="packages/browser/interop.js"></script>
+    <script src="packages/browser/dart.js" defer></script>
+
+    <script src="demo.dart" type="application/dart"></script>
+
+  </body>
+</html>
