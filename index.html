@@ -14,16 +14,13 @@
     <p id='status_id'>Loading Script...</p>
 
     <div class='data_container_class'>
+      <p id='location_id' class='heading_class'></p>
+      <p id='location_lat_id' class='data_class'></p>
+      <p id='location_lon_id' class='data_class'></p>
       <p id='pressure_id' class='heading_class'></p>
       <p id='pressure_hPa_id' class='data_class'></p>
       <p id='altitude_id' class='heading_class'></p>
       <p id='altitude_m_id' class ='data_class'></p>
-    </div>
-
-    <div class='data_container_class'>
-      <p id='location_id' class='heading_class'></p>
-      <p id='location_lat_id' class='data_class'></p>
-      <p id='location_lon_id' class='data_class'></p>
     </div>
 
     <div class='data_container_class'>
@@ -32,7 +29,15 @@
       <p id='accel_y_id' class='data_class'></p>
       <p id='accel_z_id' class='data_class'></p>
       <p id='accel_mag_id' class='data_class'></p>
+
+      <p id='gyro_id' class='heading_class'></p>
+      <p id='gyro_x_id' class='data_class'></p>
+      <p id='gyro_y_id' class='data_class'></p>
+      <p id='gyro_z_id' class='data_class'></p>
+      <p id='gyro_angle_id' class='data_class'></p>
     </div>
+
+    <canvas id='horizon_canvas'></canvas>
 
     <script src="packages/browser/interop.js"></script>
     <script src="packages/browser/dart.js" defer></script>

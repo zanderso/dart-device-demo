@@ -4,3 +4,4 @@ dependencies:
     git:
       url: git://github.com/zanderso/gap.git
   chart: any
+  vector_math: any

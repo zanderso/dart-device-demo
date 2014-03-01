@@ -11,10 +11,13 @@ import 'package:rikulo_gap/device.dart';
 import 'package:rikulo_gap/accelerometer.dart';
 import 'package:rikulo_gap/barometer.dart';
 import 'package:rikulo_gap/geolocation.dart';
+import 'package:rikulo_gap/gyroscope.dart';
 
 // Charts.
 import 'package:chart/chart.dart';
 
+// Vector math.
+import 'package:vector_math/vector_math.dart';
 
 double abs(double x) => x < 0.0 ? -x : x;
 
@@ -33,8 +36,33 @@ double altitude(double pressure_hPa) {
   return ((t0 / (pow(p/p0, (r*l0)/(g*m))) - t0)/l0) + h0;
 }
 
+Vecotr3 up = new Vector3.zero();
+int ts = 0;
 
-String showAcceleration(Line chart,
+// If the magnitude of the acceleration vector is ~g, then we can figure
+// out which way is up.
+void updateUpWithAcceleration(Acceleration accel) {
+  double mag = sqrt(accel.x*accel.x + accel.y*accel.y + accel.z*accel.z);
+  if ((mag > 9.5) && (mag < 10.5)) {
+    up.setValues(accel.x/mag, accel.y/mag, accel.z/mag);
+  }
+}
+
+
+void updateUpWithAngularSpeed(AngularSpeed speed) {
+  speed.doRotation(up, ts);
+}
+
+
+double simpleAngle() {
+  double sign = (up.x >= 0.0) ? -1.0 : 1.0;
+  double up_dot_y = up.y;
+  double mag = sqrt(up.x*up.x + up.y*up.y);
+  return sign * acos(up_dot_y / mag);
+}
+
+
+String showAcceleration(Line chart, CanvasRenderingContext2D context,
                         List<double> xdata,
                         List<double> ydata,
                         List<double> zdata,
@@ -65,6 +93,7 @@ String showAcceleration(Line chart,
       zdata.insert(0, abs(accel.z));
       mdata.insert(0, mag);
       chart.show(querySelector('#accel_chart_id'));
+      updateUpWithAcceleration(accel);
     },
     () {
       querySelector("#accel_id").text = "Accelerometer Fail";
@@ -125,6 +154,51 @@ String showLocation() {
     new GeolocationOptions(frequency:600000, timeout:300000,
                            enableHighAccuracy:true)
   );
+}
+
+
+String showAngularSpeed(CanvasRenderingContext2D context) {
+  void drawHorizon(int time) {
+    double angle = simpleAngle();
+    if (!angle.isNaN) {
+      context.clearRect(0, 0, 150, 150);
+      context.save();
+      context.translate(75, 75);
+      context.rotate(angle);
+      context.beginPath();
+      context.rect(-25, -50, 50, 100);
+      context.fill();
+      context.stroke();
+      context.restore();
+    }
+  }
+
+  querySelector("#gyro_id").text = "Angular Speed: Looking";
+  querySelector("#gyro_x_id").text = "x: ???";
+  querySelector("#gyro_y_id").text = "y: ???";
+  querySelector("#gyro_z_id").text = "z: ???";
+  querySelector("#gyro_angle_id").text = "angle: ???";
+  var id = gyroscope.watchAngularSpeed(
+    (speed) {
+      String x = speed.w.x.toStringAsFixed(2);
+      String y = speed.w.y.toStringAsFixed(2);
+      String z = speed.w.z.toStringAsFixed(2);
+      querySelector("#gyro_id").text = "Angular Speed:";
+      querySelector("#gyro_x_id").text = "x: $x";
+      querySelector("#gyro_y_id").text = "y: $y";
+      querySelector("#gyro_z_id").text = "z: $z";
+      updateUpWithAngularSpeed(speed);
+      String angle = simpleAngle().toStringAsFixed(3);
+      querySelector("#gyro_angle_id").text = "angle: ${angle}";
+      ts = speed.timestamp;
+      window.requestAnimationFrame(drawHorizon);
+    },
+    () {
+      querySelector("#gyro_id").text = "Gyroscope Fail";
+    },
+    new GyroscopeOptions(frequency:50)
+  );
+  return id;
 }
 
 
@@ -205,11 +279,20 @@ void main() {
     'animation': false,    
   });
 
+
+  CanvasElement horizon_canvas = querySelector("#horizon_canvas");
+  horizon_canvas.width = 150;
+  horizon_canvas.height = 150;
+  CanvasRenderingContext2D horizon_context = horizon_canvas.getContext('2d');
+
+
   enable.then((device) {
     text.text = "";
-    var accel_id = showAcceleration(accel_chart, xdata, ydata, zdata, mdata);
+    var accel_id = showAcceleration(accel_chart, horizon_context,
+                                    xdata, ydata, zdata, mdata);
     var pressure_id = showPressure(baro_chart, bdata);
     var location_id = showLocation();
+    var gyro_id = showAngularSpeed(horizon_context);
   });
   enable.catchError((ex) {
     text.text = "There was an error: $ex";
