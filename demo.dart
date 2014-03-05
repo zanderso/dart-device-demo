@@ -67,8 +67,8 @@ void updateUpWithAngularSpeed(AngularSpeed speed) {
 }
 
 
-double simpleAngle() {
-  double sign = (up.x >= 0.0) ? -1.0 : 1.0;
+double angleFromVertical() {
+  double sign = (up.x >= 0.0) ? 1.0 : -1.0;
   double up_dot_y = up.y;
   double mag = sqrt(up.x*up.x + up.y*up.y);
   return sign * acos(up_dot_y / mag);
@@ -177,8 +177,8 @@ String showLocation() {
 
 
 String showAngularSpeed(CanvasRenderingContext2D context) {
-  void drawHorizon(int time) {
-    double angle = simpleAngle();
+  void drawBox(int time) {
+    double angle = angleFromVertical();
     if (!angle.isNaN) {
       context.clearRect(0, 0, 150, 150);
       context.save();
@@ -206,11 +206,16 @@ String showAngularSpeed(CanvasRenderingContext2D context) {
       querySelector("#gyro_x_id").text = "x: $x";
       querySelector("#gyro_y_id").text = "y: $y";
       querySelector("#gyro_z_id").text = "z: $z";
+
+      double old_angle = angleFromVertical();
       updateUpWithAngularSpeed(speed);
-      String angle = simpleAngle().toStringAsFixed(3);
-      querySelector("#gyro_angle_id").text = "angle: ${angle}";
+      double new_angle = angleFromVertical();
+      double displacement = new_angle - old_angle;
+      String angle = displacement.toStringAsFixed(3);
+      querySelector("#gyro_angle_id").text = "ang. disp.: ${angle}";
+
       ts = speed.timestamp;
-      window.requestAnimationFrame(drawHorizon);
+      window.requestAnimationFrame(drawBox);
     },
     () {
       querySelector("#gyro_id").text = "Gyroscope Fail";
