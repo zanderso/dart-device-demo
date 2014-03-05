@@ -19,19 +19,32 @@ import 'package:chart/chart.dart';
 // Vector math.
 import 'package:vector_math/vector_math.dart';
 
+// Weather.
+import 'package:weather_underground_api/weather_underground_api_html.dart';
+
 double abs(double x) => x < 0.0 ? -x : x;
 
 
 // From http://en.wikipedia.org/wiki/Barometric_formula
+double current_temp_C = 15.0;
+double current_rel_humid = 0.0;
 double altitude(double pressure_hPa) {
   double p0 = 101325.00;  // Static pressure (pascals).
-  double t0 = 288.15;  // Standard temperature (K) [15C].
+  // double t0 = 288.15;  // Standard temperature (K) [15C].
+  double t0 = current_temp_C + 273.15;
   double l0 = -0.0065;  // Standard temperature lapse rate (K/m).
   double h0 = 0.0;  // Height at bottom of layer b (m).
   double r = 8.31432;  //  Universal gas constant for air (N*m/mol*K).
   double g = 9.80665;  // Gravitational acceleration (m/s^2).
-  double m = 0.0289644;  // Molar mass of Earth's air (kg/mol).
+  double m_d = 0.0289644;  // Molar mass of dry air (kg/mol).
+  double m_w = 0.018016;  // Molar mass of water vapor.
+
+  double t_C = current_temp_C;
   double p = pressure_hPa * 100.0;
+  double p_sat = 6.1078 * pow(10.0, (7.5*t_C)/(t_C + 237.3)) * 100.0;
+  double p_w = current_rel_humid * p_sat;
+  double p_d = p - p_w;
+  double m = (p_d * m_d + p_w * m_w) / p;
 
   return ((t0 / (pow(p/p0, (r*l0)/(g*m))) - t0)/l0) + h0;
 }
@@ -131,7 +144,8 @@ String showPressure(Line chart, List<double> bdata) {
   return id;
 }
 
-
+String current_lat = null;
+String current_lon = null;
 String showLocation() {
   querySelector("#location_id").text = "Location: Looking";
   querySelector("#location_lat_id").text = "lat: ???";
@@ -140,6 +154,11 @@ String showLocation() {
     (pos) {
       String lat = pos.coords.latitude.toStringAsFixed(2);
       String lon = pos.coords.longitude.toStringAsFixed(2);
+      if (current_lat == null) {
+        current_lat = pos.coords.latitude.toString();
+        current_lon = pos.coords.longitude.toString();
+        getWeatherConditions();
+      }
       querySelector("#location_id").text = "Location:";
       querySelector("#location_lat_id").text = "lat: ${lat}";
       querySelector("#location_lon_id").text = "lon: ${lon}";
@@ -199,6 +218,25 @@ String showAngularSpeed(CanvasRenderingContext2D context) {
     new GyroscopeOptions(frequency:50)
   );
   return id;
+}
+
+
+void getWeatherConditions() {
+  querySelector('#temp_id').text = "Temp: ";
+  String lat = current_lat == null ? "37.368889" : current_lat;
+  String lon = current_lon == null ? "-122.035278" : current_lon;
+  var wu = new WeatherUnderground("18866cf715ec285a", "$lat,$lon");
+  wu.setTimeout(30000);
+  wu.getConditions().then((val) {
+    double temp_str = val['temp_c'];
+    String humid_str = val['relative_humidity'];
+    current_temp_C = temp_str;
+    current_rel_humid = double.parse(humid_str.substring(0, humid_str.length - 2)) / 100.0;
+    querySelector('#temp_id').text = "Temp: $temp_str C";
+    querySelector('#humidity_id').text = "Humidity: $humid_str";
+  }).catchError((e, stack) {
+    querySelector('#temp_id').text = "Temp: $e $stack";
+  });
 }
 
 
@@ -293,6 +331,7 @@ void main() {
     var pressure_id = showPressure(baro_chart, bdata);
     var location_id = showLocation();
     var gyro_id = showAngularSpeed(horizon_context);
+    getWeatherConditions();
   });
   enable.catchError((ex) {
     text.text = "There was an error: $ex";

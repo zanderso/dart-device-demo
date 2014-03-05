@@ -13,4 +13,8 @@
       "scripts": ["background.js"]
     }
   },
+  "permissions": [
+    "http://api.wunderground.com/",
+    "http://autocomplete.wunderground.com/"
+  ]
 }

@@ -5,3 +5,6 @@ dependencies:
       url: git://github.com/zanderso/gap.git
   chart: any
   vector_math: any
+  weather_underground_api:
+    git:
+      url: git://github.com/zanderso/weather_underground_api_dart.git
